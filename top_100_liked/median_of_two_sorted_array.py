@@ -1,7 +1,37 @@
+import math
 from typing import *
-import math
-import math
 class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        ### A is the longer array
+        A = nums1 if len(nums1) >= len(nums2) else nums2
+        B = nums1 if len(nums1) <  len(nums2) else nums2
+        m, n = len(A), len(B)
+        target, odd = (m+n+1)//2, (m+n)%2
+        # edge case
+        if(m == 0): # both 0
+            return 0
+        if(n == 0):
+            return A[target-1] if(odd) else (A[target-1] + A[target])/2
+        minn, maxx = target - n - 1, target - 1
+        while(True):
+            mid = (minn + maxx)//2
+            bpt = target - mid - 2
+            a = -math.inf if mid < 0 else A[mid]
+            a_ = math.inf if mid+1 >= m else A[mid+1]
+            b = -math.inf if (bpt < 0 or bpt >= n) else B[bpt]
+            b_ = math.inf if bpt+1 >= n else B[bpt+1]
+            
+            if(b_ >= a and a_ >= b and bpt < n):
+                if(odd):
+                    return max(a, b)
+                return (max(a,b) + min(a_,b_))/2
+            
+            if(b_ < a):
+                maxx = mid - 1
+            elif(a_ < b or bpt >= n):
+                minn = mid + 1  
+        
+class SSolution:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
         # let A be the bigger array, we do binary search on it
         A = nums1 if len(nums1) >= len(nums2) else nums2
@@ -46,3 +76,6 @@ class Solution:
                     else:
                         nxt_element = A[mid+1]
                     return (max(A[mid], B[bpt]) + nxt_element)/2
+
+s = Solution()
+s.findMedianSortedArrays([1,2],[3,4])
